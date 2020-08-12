@@ -1,0 +1,21 @@
+AbilityCalculator.getPower = function(unit, weapon) {
+		var pow;
+		if (Miscellaneous.isPhysicsBattle(weapon)) {
+			// 物理攻撃または投射攻撃
+			pow = RealBonus.getStr(unit);
+		}
+		else {
+			// 魔法攻撃
+			pow = RealBonus.getMag(unit);
+		}
+		
+		// 武器の威力 + (力 or 魔力)
+		pow = pow + weapon.getPow();
+    
+    //キーワードavengerをもつカスタムスキル所持の場合、HPの減少具合でダメージ増加（最大200%）
+		if (SkillControl.getPossessionCustomSkill(unit, 'avenger')) {
+			var prpHP = (RealBonus.getMhp(unit) - unit.getHP()) / RealBonus.getMhp(unit) * 100;
+			pow = Math.floor(pow * ((100 + prpHP) / 100));
+		}
+    return pow;
+};
